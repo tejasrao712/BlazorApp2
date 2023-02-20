@@ -1,17 +1,20 @@
 ﻿@page "/calculator"
 @inject HttpClient Http
 @using System.Net.Http
+@using System.Text.Json
+@using BlazorApp2.Client.Models
+@using System.Net.Http.Headers;
 <h1>Calculator</h1>
 
 <p>Enter two numbers and select an operation:</p>
 
 <label for="firstNumber">First number:</label>
-<input id="firstNumber" @bind="@FirstNumber" type="number" />
+<input id="firstNumber" @bind-value="@calcInput.FirstNumber" type="number" />
 
 <label for="secondNumber">Second number:</label>
-<input id="secondNumber" @bind="@SecondNumber" type="number" />
+<input id="secondNumber" @bind="@calcInput.SecondNumber" type="number" />
 
-<select @bind="@SelectedOperation">
+<select @bind="@calcInput.SelectedOperation">
     <option value="add">Add</option>
     <option value="subtract">Subtract</option>
     <option value="multiply">Multiply</option>
@@ -20,30 +23,37 @@
 
 <button @onclick="Calculate">Calculate</button>
 
-@if (Result != null)
+@if (calcInput.Result != null)
 {
-    <p>Result: @Result</p>
+    <p>Result: @calcInput.Result</p>
 }
 
 
 @code {
-    private int? FirstNumber { get; set; }
-    private int? SecondNumber { get; set; }
-    private string SelectedOperation { get; set; }
-    private int? Result { get; set; }
-
+    public CalculationModel calcInput { get; set; } = new CalculationModel();
     private async Task Calculate()
     {
+        Http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         // Make API call to calculate result
         var apiUrl = "api/CalcApi/Calculate";
-        var data = new { FirstNumber, SecondNumber, Operation = SelectedOperation };
-        var response = await Http.PostAsJsonAsync(apiUrl, data);
+        var jsonInput = JsonSerializer.Serialize(calcInput);
+        //var data = new { FirstNumber, SecondNumber, Operation = SelectedOperation };
+        var response = await Http.PostAsJsonAsync(apiUrl, jsonInput);
 
         // Get result from response
-        Result = await response.Content.ReadFromJsonAsync<int>();
-        Console.Write(Result);
+        if (response.IsSuccessStatusCode)
+        {
+            calcInput.Result = await response.Content.ReadFromJsonAsync<int>();
+            Console.WriteLine(calcInput.Result);
+        }
+        else
+        {
+            var errorMessage = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"API error: {errorMessage}");
+        }
+
         // Clear input fields
-        FirstNumber = null;
-        SecondNumber = null;
+        //calcInput.FirstNumber = null;
+        //calcInput.SecondNumber = null;
     }
 }
