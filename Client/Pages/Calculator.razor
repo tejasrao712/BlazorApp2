@@ -12,7 +12,7 @@
 <input id="firstNumber" @bind-value="@calcInput.FirstNumber" type="number" />
 
 <label for="secondNumber">Second number:</label>
-<input id="secondNumber" @bind="@calcInput.SecondNumber" type="number" />
+<input id="secondNumber" @bind-value="@calcInput.SecondNumber" type="number" />
 
 <select @bind="@calcInput.SelectedOperation">
     <option value="add">Add</option>
@@ -35,15 +35,15 @@
     {
         Http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         // Make API call to calculate result
-        var apiUrl = "api/CalcApi/Calculate";
-        var jsonInput = JsonSerializer.Serialize(calcInput);
-        //var data = new { FirstNumber, SecondNumber, Operation = SelectedOperation };
-        var response = await Http.PostAsJsonAsync(apiUrl, jsonInput);
+        var apiUrl = "api/CalcAPI";
+        //var jsonInput = JsonSerializer.Serialize(calcInput);
+        var data = new { calcInput.FirstNumber, calcInput.SecondNumber, Operation = calcInput.SelectedOperation };
+        var response = await Http.PostAsJsonAsync(apiUrl, data);
 
         // Get result from response
         if (response.IsSuccessStatusCode)
         {
-            calcInput.Result = await response.Content.ReadFromJsonAsync<int>();
+            calcInput.Result = await response.Content.ReadFromJsonAsync<double>();
             Console.WriteLine(calcInput.Result);
         }
         else
@@ -55,5 +55,10 @@
         // Clear input fields
         //calcInput.FirstNumber = null;
         //calcInput.SecondNumber = null;
+    
+        
+
     }
+
+
 }

@@ -18,7 +18,7 @@ namespace BlazorApp2.Server.Database
             _transactions = (IMongoCollection<Transaction>?)database.GetCollection<Transaction>("Transactions");
         }
 
-        public async Task StoreTransaction(int firstNumber, int secondNumber, string operation, int result)
+        public async Task StoreTransaction(int firstNumber, int secondNumber, string operation, double result)
         {
             var transaction = new Transaction
             {
@@ -40,7 +40,7 @@ namespace BlazorApp2.Server.Database
         public int FirstNumber { get; set; }
         public int SecondNumber { get; set; }
         public string Operation { get; set; }
-        public int Result { get; set; }
+        public double Result { get; set; }
         public DateTime Timestamp { get; set; }
     }
 }

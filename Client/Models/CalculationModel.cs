@@ -2,10 +2,10 @@
 {
     public class CalculationModel
     {
-        public int FirstNumber { get; set; }
-        public int SecondNumber { get; set; }
+        public int? FirstNumber { get; set; }
+        public int? SecondNumber { get; set; }
         public string SelectedOperation { get; set; }
-        public int Result { get; set; }
+        public double? Result { get; set; }
     }
     public class Calculationtransaction
     {

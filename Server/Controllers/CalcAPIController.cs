@@ -11,40 +11,32 @@ namespace BlazorApp2.Server.Controllers
     public class CalcAPIController : ControllerBase
     {
 
-        [HttpPost("calculate")]
-        public async Task<ActionResult> Calculate(CalculationModel request)
+        [HttpPost]
+        public async Task<ActionResult> Calculate(CalculationModel model)
         {
-            int result;
-            switch (request.SelectedOperation)
+            double result;
+            switch (model.SelectedOperation)
             {
                 case "add":
-                    result = request.FirstNumber + request.SecondNumber;
+                    result = Convert.ToDouble(model.FirstNumber) + Convert.ToDouble(model.SecondNumber);
                     break;
                 case "subtract":
-                    result = request.FirstNumber - request.SecondNumber;
+                    result = Convert.ToDouble(model.FirstNumber) - Convert.ToDouble(model.SecondNumber);
                     break;
                 case "multiply":
-                    result = request.FirstNumber * request.SecondNumber;
+                    result = Convert.ToDouble(model.FirstNumber) * Convert.ToDouble(model.SecondNumber);
                     break;
                 case "divide":
-                    result = request.SecondNumber == 0 ? throw new ArgumentException("Cannot divide by zero") : request.FirstNumber / request.SecondNumber;
+                    result = Convert.ToDouble(model.FirstNumber) == 0 ? throw new ArgumentException("Cannot divide by zero") : Convert.ToDouble(model.FirstNumber) / Convert.ToDouble(model.SecondNumber);
                     break;
                 default:
                     throw new ArgumentException("Invalid operation");
             }
             
-            var transactionService = new ConnectDB("","");
-            await transactionService.StoreTransaction(request.FirstNumber, request.SecondNumber, request.SelectedOperation, result);
+            var transactionService = new ConnectDB("mongodb://localhost:27017", "ASPDB");
+            await transactionService.StoreTransaction((int)Convert.ToDouble(model.FirstNumber), (int)Convert.ToDouble(model.SecondNumber), model.SelectedOperation, result);
 
             return Ok(result);
-        }
-        public class CalculatorTransaction
-        {
-            public int FirstNumber { get; set; }
-            public int SecondNumber { get; set; }
-            public string Operation { get; set; }
-            public int Result { get; set; }
-            public DateTime CreatedOn { get; set; }
         }
     }
 }
