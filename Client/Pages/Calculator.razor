@@ -9,10 +9,10 @@
 <p>Enter two numbers and select an operation:</p>
 
 <label for="firstNumber">First number:</label>
-<input id="firstNumber" @bind-value="@calcInput.FirstNumber" type="number" />
+<input id="firstNumber" @bind="@calcInput.FirstNumber" type="number" />
 
 <label for="secondNumber">Second number:</label>
-<input id="secondNumber" @bind-value="@calcInput.SecondNumber" type="number" />
+<input id="secondNumber" @bind="@calcInput.SecondNumber" type="number" />
 
 <select @bind="@calcInput.SelectedOperation">
     <option value="add">Add</option>
@@ -50,7 +50,6 @@
             var errorMessage = await response.Content.ReadAsStringAsync();
             Console.WriteLine($"API error: {errorMessage}");
         }
-
         calcInput.FirstNumber = null;
         calcInput.SecondNumber = null;   
     }
