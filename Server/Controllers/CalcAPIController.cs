@@ -12,7 +12,7 @@ namespace BlazorApp2.Server.Controllers
     {
 
         [HttpPost]
-        public async Task<ActionResult> Calculate(CalculationModel model)
+        public async Task<ActionResult> Calculate([FromBody]CalculationModel model)
         {
             double result;
             switch (model.SelectedOperation)

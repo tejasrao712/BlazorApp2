@@ -1,9 +1,9 @@
 ﻿@page "/calculator"
 @inject HttpClient Http
 @using System.Net.Http
-@using System.Text.Json
 @using BlazorApp2.Client.Models
 @using System.Net.Http.Headers;
+@using System.Net.Http.Json;
 <h1>Calculator</h1>
 
 <p>Enter two numbers and select an operation:</p>
@@ -34,16 +34,15 @@
     private async Task Calculate()
     {
         Http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        // Make API call to calculate result
-        var apiUrl = "api/CalcAPI";
+        var apiUrl = "/api/CalcAPI";
         //var jsonInput = JsonSerializer.Serialize(calcInput);
-        var data = new { calcInput.FirstNumber, calcInput.SecondNumber, Operation = calcInput.SelectedOperation };
-        var response = await Http.PostAsJsonAsync(apiUrl, data);
+        var data = new { calcInput.FirstNumber, calcInput.SecondNumber,calcInput.SelectedOperation };
 
-        // Get result from response
+        var response = await Http.PostAsJsonAsync(apiUrl, data);
         if (response.IsSuccessStatusCode)
         {
-            calcInput.Result = await response.Content.ReadFromJsonAsync<double>();
+            var result7 = await response.Content.ReadFromJsonAsync<double>();
+            calcInput.Result = result7;
             Console.WriteLine(calcInput.Result);
         }
         else
@@ -52,12 +51,8 @@
             Console.WriteLine($"API error: {errorMessage}");
         }
 
-        // Clear input fields
-        //calcInput.FirstNumber = null;
-        //calcInput.SecondNumber = null;
-    
-        
-
+        calcInput.FirstNumber = null;
+        calcInput.SecondNumber = null;   
     }
 
 
